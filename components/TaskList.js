@@ -1,10 +1,9 @@
 import Swipeable from 'react-native-swipeable';
 import React from 'react';
-import { View, FlatList, RefreshControl, StyleSheet, Text, TouchableWithoutFeedback } from 'react-native';
+import { View, FlatList, RefreshControl, StyleSheet, Text } from 'react-native';
 
 import TaskItem from './TaskItem';
-
-
+import ModalDialog from './ModalDialog';
 
 export default class TaskList extends React.Component {
 
@@ -33,10 +32,10 @@ export default class TaskList extends React.Component {
 
     return (
     <Swipeable style={styles.item} leftContent={completeBtn} rightButtons={rightButtons} rightButtonWidth={100}>
-      <TaskItem {...item} />
+      <TaskItem openModal={this.setModalVisible} {...item} />
     </Swipeable>
   );
-}
+};
 
   constructor(props) {
     super(props);
@@ -44,6 +43,8 @@ export default class TaskList extends React.Component {
       isRefreshing: false,
       data: []
     };
+
+    this.setModalVisible = this.setModalVisible.bind(this);
   }
 
   _fetchData() {
@@ -59,6 +60,10 @@ export default class TaskList extends React.Component {
     this._fetchData();
   }
 
+  setModalVisible(visible) {
+    this.refs.modal.setModalVisible(visible);
+  }
+
   _onRefresh() {
     this.setState({isRefreshing: true});
     this._fetchData().then(() => {
@@ -69,6 +74,7 @@ export default class TaskList extends React.Component {
   render() {
     return (
       <View style={styles.container}>
+        <ModalDialog ref="modal"/>
         <FlatList
           keyExtractor={this._keyExtractor}
           renderItem={this._renderItem}
