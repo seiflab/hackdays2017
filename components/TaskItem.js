@@ -19,9 +19,7 @@ export default class TaskItem extends React.Component {
     return (
       <View style={styles.container}>
         <Text style={styles.header}> {this.props.name.replace(/\r?\n|\r/g, ' ')} </Text>
-        <View style={styles.body}>
-          <Text style={styles.date}>{this._formatDate(this.props.created)}</Text>
-        </View>
+        <Text style={styles.date}>{this._formatDate(this.props.created)}</Text>
       </View>
     );
   }
@@ -30,17 +28,14 @@ export default class TaskItem extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection:'column'
+    flexDirection:'row',
+    justifyContent: 'space-between',
+    paddingLeft: 15,
+    paddingRight: 15
   },
   header: {
-    flex: 1,
     fontSize: 15,
     fontWeight: 'bold'
-  },
-  body: {
-    flex: 1,
-    flexDirection:'row',
-    justifyContent: 'space-between'
   },
   bodyText: {
     fontSize: 10

@@ -11,13 +11,28 @@ export default class TaskList extends React.Component {
   _keyExtractor = (item, index) => item.id;
 
   _renderItem = ({item}) => {
-    const leftContent = <Text>Pull to activate</Text>;
+    const completeBtn = (
+      <View style={[styles.leftContent, {backgroundColor: '#ff3b30'}]}>
+        <Text style={styles.whiteText}>Complete</Text>
+      </View>
+    );
+    const claimBtn =  (
+      <View style={[styles.rightContent, {backgroundColor: '#007aff', paddingLeft: 30}]}>
+        <Text style={styles.whiteText}>Claim</Text>
+      </View>
+    );
+    const dueDateBtn =  (
+      <View style={[styles.rightContent, {backgroundColor: '#D3D3D3'}]}>
+        <Text style={styles.whiteText}>Due Date</Text>
+      </View>
+    );
     const rightButtons = [
-      <Text style={styles.btn}>Button 1</Text>,
-      <Text>Button 2</Text>
+      claimBtn,
+      dueDateBtn
     ];
+
     return (
-    <Swipeable style={styles.item} leftContent={leftContent} rightButtons={rightButtons}>
+    <Swipeable style={styles.item} leftContent={completeBtn} rightButtons={rightButtons} rightButtonWidth={100}>
       <TaskItem {...item} />
     </Swipeable>
   );
@@ -77,9 +92,26 @@ const styles = StyleSheet.create({
   },
   item: {
     flex: 1,
-    padding: 15
+    padding: 15,
+    paddingLeft: 0,
+    paddingRight: 0
   },
-  btn: {
-    backgroundColor: 'red'
+  leftContent: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    backgroundColor: 'red',
+    padding: 20
+  },
+  rightContent: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    padding: 20
+  },
+  whiteText: {
+    color: 'white'
   }
 });
