@@ -9,11 +9,8 @@ export default class App extends React.Component {
     this.state = { data: [] };
   }
 
-  componentDidMount() {
-    fetch('http://localhost:8080/engine-rest/task')
-      .then(response => response.json())
-      .then(data => this.setState({ data }));
-  }
+  /*componentDidMount() {
+  }*/
 
   render() {
     return (
