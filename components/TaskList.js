@@ -2,17 +2,26 @@ import Swipeable from 'react-native-swipeable';
 import React from 'react';
 import { View, FlatList, RefreshControl, StyleSheet, Text, TouchableWithoutFeedback } from 'react-native';
 
-const leftContent = <Text>Pull to activate</Text>;
-const rightButtons = [
-  <Text>Button 1</Text>,
-  <Text>Button 2</Text>
-];
+import TaskItem from './TaskItem';
+
+
 
 export default class TaskList extends React.Component {
 
   _keyExtractor = (item, index) => item.id;
 
-  _renderItem = ({item}) => <Swipeable style={styles.item} leftContent={leftContent} rightButtons={rightButtons}><Text key={item.id}>{item.name}</Text></Swipeable>;
+  _renderItem = ({item}) => {
+    const leftContent = <Text>Pull to activate</Text>;
+    const rightButtons = [
+      <Text style={styles.btn}>Button 1</Text>,
+      <Text>Button 2</Text>
+    ];
+    return (
+    <Swipeable style={styles.item} leftContent={leftContent} rightButtons={rightButtons}>
+      <TaskItem {...item} />
+    </Swipeable>
+  );
+}
 
   constructor(props) {
     super(props);
@@ -67,8 +76,10 @@ const styles = StyleSheet.create({
     flex: 1
   },
   item: {
-    padding: 10,
-    width:200,
-    flex: 1
+    flex: 1,
+    padding: 15
+  },
+  btn: {
+    backgroundColor: 'red'
   }
 });
