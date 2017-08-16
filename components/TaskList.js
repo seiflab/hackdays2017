@@ -98,7 +98,6 @@ const styles = StyleSheet.create({
   },
   item: {
     flex: 1,
-    padding: 15,
     paddingLeft: 0,
     paddingRight: 0
   },

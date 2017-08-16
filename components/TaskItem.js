@@ -18,7 +18,7 @@ export default class TaskItem extends React.Component {
   render() {
     return (
 
-      <TouchableHighlight style={styles.touch} onPress={()=>this.props.openModal(true)}>
+      <TouchableHighlight style={styles.touch} onPress={()=>this.props.openModal(true)} underlayColor="rgba(0, 0, 0, 0.05)">
         <View style={styles.container}>
           <Text style={styles.header}> {this.props.name.replace(/\r?\n|\r/g, ' ')}</Text>
           <Text style={styles.date}>{this._formatDate(this.props.created)}</Text>
@@ -30,7 +30,10 @@ export default class TaskItem extends React.Component {
 
 const styles = StyleSheet.create({
   touch: {
-    flex: 1
+    flex: 1,
+    padding: 15,
+    paddingLeft:0,
+    paddingRight:0
   },
   container: {
     flex: 1,
