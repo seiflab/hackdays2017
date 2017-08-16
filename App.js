@@ -1,14 +1,27 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import TaskList from './components/TaskList';
+
 
 export default class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { data: [] };
+  }
+
+  componentDidMount() {
+    fetch('http://localhost:8080/engine-rest/task')
+      .then(response => response.json())
+      .then((data) => {
+        const mappedData = data.map(dataItem => Object.assign({}, dataItem, { key: dataItem.id }));
+        this.setState({ data: mappedData });
+      });
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <Text>Open up App.js to start working on your app!</Text>
-        <Text>Changes you make will automatically reload.</Text>
-        <Text>Shake your phone to open the developer menu.</Text>
-        
+        <TaskList data={this.state.data} />
       </View>
     );
   }
@@ -17,8 +30,7 @@ export default class App extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    paddingTop: 100,
     alignItems: 'center',
-    justifyContent: 'center',
   },
 });
