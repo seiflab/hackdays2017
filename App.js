@@ -12,10 +12,7 @@ export default class App extends React.Component {
   componentDidMount() {
     fetch('http://localhost:8080/engine-rest/task')
       .then(response => response.json())
-      .then((data) => {
-        const mappedData = data.map(dataItem => Object.assign({}, dataItem, { key: dataItem.id }));
-        this.setState({ data: mappedData });
-      });
+      .then(data => this.setState({ data }));
   }
 
   render() {
