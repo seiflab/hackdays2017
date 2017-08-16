@@ -11,17 +11,17 @@ export default class TaskList extends React.Component {
 
   _renderItem = ({item}) => {
     const completeBtn = (
-      <View style={[styles.leftContent, {backgroundColor: '#ff3b30'}]}>
+      <View style={[styles.leftContent, {backgroundColor: '#007aff'}]}>
         <Text style={styles.whiteText}>Complete</Text>
       </View>
     );
     const claimBtn =  (
-      <View style={[styles.rightContent, {backgroundColor: '#007aff', paddingLeft: 30}]}>
+      <View style={[styles.rightContent, {backgroundColor: '#f09a38', paddingLeft: 30}]}>
         <Text style={styles.whiteText}>Claim</Text>
       </View>
     );
     const dueDateBtn =  (
-      <View style={[styles.rightContent, {backgroundColor: '#D3D3D3'}]}>
+      <View style={[styles.rightContent, {backgroundColor: '#4b70a6'}]}>
         <Text style={styles.whiteText}>Due Date</Text>
       </View>
     );

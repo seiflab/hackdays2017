@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, NavigatorIOS, StatusBar } from 'react-native';
 import TaskList from './components/TaskList';
 
 
@@ -12,15 +12,26 @@ export default class App extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <TaskList data={this.state.data} />
+        <StatusBar barStyle="light-content"/>
+        <NavigatorIOS
+          style={styles.navigator}
+          barTintColor= '#b5152b'
+          titleTextColor='white'
+          initialRoute={{
+            component: TaskList,
+            title: 'Tasklist',
+          }}
+        />
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  navigator: {
+    flex:1
+  },
   container: {
-    flex: 1,
-    paddingTop: 100
+    flex: 1
   },
 });
