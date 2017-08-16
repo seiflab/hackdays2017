@@ -47,7 +47,7 @@ export default class TaskList extends React.Component {
   }
 
   _fetchData() {
-    return fetch('http://localhost:8080/engine-rest/task')
+    return fetch('http://localhost:8080/engine-rest/task?sortBy=created&sortOrder=desc')
       .then(response => response.json())
       .then((data) => {
         const mappedData = data.map(dataItem => Object.assign({}, dataItem, { key: dataItem.id }));
