@@ -26,6 +26,19 @@ export default class TaskList extends React.Component {
 
   _keyExtractor = (item, index) => item.id;
 
+  updateData(item, attr, value) {
+    let itemIndex;
+    let data = this.state.data;
+    data.find(function (element, index) {
+      if (element === item) {
+        itemIndex = index;
+      }
+    });
+
+    data[itemIndex][attr] = value;
+    this.setState(this.state);
+  }
+
   _renderItem = ({item}) => {
     let completeBtn = (
       <View style={[styles.leftContent, {backgroundColor: '#007aff'}]}>
@@ -44,30 +57,14 @@ export default class TaskList extends React.Component {
                                 [
                                   {text: 'Cancel', onPress: () => {
                                     this._postClaimState(item, 'unclaim').then(() => {
-                                      let itemIndex;
-                                      this.state.data.find(function (element, index) {
-                                        if (element === item) {
-                                          itemIndex = index;
-                                        }
-                                      });
-
-                                      this.state.data[itemIndex].assignee = null;
-                                      this.setState(this.state);
+                                      this.updateData(item, 'assignee', null);
                                     });
                                   }},
                                   {text: 'Assign', onPress: (assignee) => {
                                     item.assignee = assignee === '' ? null : assignee;
                                     this._postClaimState(item, 'unclaim').then(() => {
                                       this._postClaimState(item, 'claim').then(() => {
-                                        let itemIndex;
-                                        this.state.data.find(function (element, index) {
-                                          if (element === item) {
-                                            itemIndex = index;
-                                          }
-                                        });
-
-                                        this.state.data[itemIndex].assignee = item.assignee;
-                                        this.setState(this.state);
+                                        this.updateData(item, 'assignee', item.assignee);
                                       })
                                     });
                                     }
@@ -79,15 +76,7 @@ export default class TaskList extends React.Component {
                               item.assignee = 'demo';
                               this._postClaimState(item, 'claim')
                                 .then(() => {
-                                  let itemIndex;
-                                  this.state.data.find(function (element, index) {
-                                    if (element === item) {
-                                      itemIndex = index;
-                                    }
-                                  });
-
-                                  this.state.data[itemIndex].assignee = 'demo';
-                                  this.setState(this.state);
+                                  this.updateData(item, 'assignee', 'demo');
                                 })
                             }
 
@@ -124,23 +113,24 @@ export default class TaskList extends React.Component {
         cancelButtonIndex: 3
       },
       (index) => {
-        this.state.dateTime.type = 'due';
+        let dateTime = this.state.dateTime;
+        dateTime.type = 'due';
 
         switch (index) {
           case 0:
-            this.state.dateTime.pickerTitle = dueLbl;
-            this.state.dateTime.type = 'due';
+            dateTime.pickerTitle = dueLbl;
+            dateTime.type = 'due';
             break;
           case 1:
-            this.state.dateTime.pickerTitle = followUpLbl;
-            this.state.dateTime.type = 'followUp';
+            dateTime.pickerTitle = followUpLbl;
+            dateTime.type = 'followUp';
             break;
         }
 
-        this.state.dateTime.item = item;
-        let type = this.state.dateTime.type;
-        this.state.dateTime.currentDate = item === 'null' || item[type] === 'undefined' || item[type] === null ? new Date() : new Date(item[type].slice(0, -5) + 'Z');
-        this.state.dateTime.pickerActive = index === 'undefined';
+        dateTime.item = item;
+        let type = dateTime.type;
+        dateTime.currentDate = item === 'null' || item[type] === 'undefined' || item[type] === null ? new Date() : new Date(item[type].slice(0, -5) + 'Z');
+        dateTime.pickerActive = index !== 3;
         this.setState(this.state);
       })
   }
@@ -237,15 +227,8 @@ export default class TaskList extends React.Component {
             item[this.state.dateTime.type] = date;
             this._putTaskUpdate(item)
               .then(() => {
-                let itemIndex;
-                this.state.data.find(function (element, index) {
-                  if (element === item) {
-                    itemIndex = index;
-                  }
-                });
-
+                this.updateData(item, this.state.dateTime.type, date);
                 this.state.dateTime.pickerActive = false;
-                this.state.data[itemIndex][this.state.dateTime.type] = date;
                 this.setState(this.state);
               })
           }}/>
