@@ -71,14 +71,28 @@ export default class TaskList extends React.Component {
     });
   }
 
+  renderSeparator = () => {
+    return (
+      <View
+        style={{
+          height: 1,
+          backgroundColor: "#CED0CE"
+        }}
+      />
+    )};
+
   render() {
     return (
       <View style={styles.container}>
         <ModalDialog ref="modal"/>
         <FlatList
+          ListEmptyComponent={
+            <Text style={styles.emptyList}>Sorry. No tasks available to work on.</Text>
+          }
           keyExtractor={this._keyExtractor}
           renderItem={this._renderItem}
           data={this.state.data}
+          ItemSeparatorComponent={this.renderSeparator}
           refreshControl={
              <RefreshControl
                  refreshing={this.state.isRefreshing}
@@ -93,6 +107,10 @@ export default class TaskList extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  emptyList: {
+    textAlign: 'center',
+    paddingTop: 10
+  },
   container: {
     flex: 1
   },
