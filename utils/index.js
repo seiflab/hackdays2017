@@ -44,8 +44,22 @@ export const parseForm = ({ key, contextPath }) => {
 
     return _.pipe(
       _.toPairs,
-      _.each(([key, obj]) => $(`input[cam-variable-name="${key}"]`).attr('value', obj.value)),
+      _.each(([key, obj]) => $(`input[cam-variable-name="${key}"], select[cam-variable-name="${key}"]`).attr({value: obj.value, customtype: obj.type})),
       () => $(':root').html()
     )(data);
 
+  }
+
+
+  export const getFormData = (form) => {
+    const $ = cheerio.load(form);
+    const variablesArray = $('input, select').map((i,{attribs}) => ([[attribs['cam-variable-name'], {value: attribs.value, type: attribs.customtype} ]])).get();
+    const variables = _.fromPairs(variablesArray);
+    return ({variables});
+  }
+
+  export const addSubmitToForm = (form) => {
+    const $ = cheerio.load(form);
+    $('<input type="submit" value="complete" />').appendTo('form');
+    return $(':root').html();
   }

@@ -12,6 +12,7 @@ export default class TaskList extends React.Component {
 
   constructor(props) {
     super(props);
+    this.fetchData = this.fetchData.bind(this);
     this.state = {
       dateTime: {
         pickerActive: false,
@@ -158,7 +159,7 @@ export default class TaskList extends React.Component {
     }).then(console.log);
   }
 
-  _fetchData() {
+  fetchData() {
     return fetch('http://' + HOSTNAME + ':8082/engine-rest/task?sortBy=created&sortOrder=desc')
       .then(response => response.json())
       .then((data) => {
@@ -168,7 +169,7 @@ export default class TaskList extends React.Component {
   }
 
   componentDidMount() {
-    this._fetchData();
+    this.fetchData();
   }
 
   setModalVisible(visible, {id}) {
@@ -177,7 +178,7 @@ export default class TaskList extends React.Component {
 
   _onRefresh() {
     this.setState({isRefreshing: true});
-    this._fetchData().then(() => {
+    this.fetchData().then(() => {
       this.setState({isRefreshing: false});
     });
   }
@@ -195,7 +196,7 @@ export default class TaskList extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <ModalDialog ref="modal"/>
+        <ModalDialog ref="modal" reload={this.fetchData}/>
         <FlatList
           ListEmptyComponent={
             <Text style={styles.emptyList}>Sorry. No tasks available to work on.</Text>
