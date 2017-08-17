@@ -137,7 +137,7 @@ export default class TaskList extends React.Component {
 
   _putTaskUpdate(item) {
     console.log(item);
-    return fetch('http://' + HOSTNAME + ':8080/engine-rest/task/' + item.id, {
+    return fetch('http://' + HOSTNAME + ':8082/engine-rest/task/' + item.id, {
       method: 'PUT',
       headers: {
         'Accept': 'application/json',
@@ -148,7 +148,7 @@ export default class TaskList extends React.Component {
   }
 
   _postClaimState(item, action) {
-    return fetch('http://' + HOSTNAME + ':8080/engine-rest/task/' + item.id + '/' + action, {
+    return fetch('http://' + HOSTNAME + ':8082/engine-rest/task/' + item.id + '/' + action, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -159,7 +159,7 @@ export default class TaskList extends React.Component {
   }
 
   _fetchData() {
-    return fetch('http://' + HOSTNAME + ':8080/engine-rest/task?sortBy=created&sortOrder=desc')
+    return fetch('http://' + HOSTNAME + ':8082/engine-rest/task?sortBy=created&sortOrder=desc')
       .then(response => response.json())
       .then((data) => {
         const mappedData = data.map(dataItem => Object.assign({}, dataItem, { key: dataItem.id }));
@@ -171,8 +171,8 @@ export default class TaskList extends React.Component {
     this._fetchData();
   }
 
-  setModalVisible(visible) {
-    this.refs.modal.setModalVisible(visible);
+  setModalVisible(visible, {id}) {
+    this.refs.modal.setModalVisible(visible, {id});
   }
 
   _onRefresh() {
