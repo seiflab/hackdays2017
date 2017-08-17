@@ -51,15 +51,15 @@ export default class ModalDialog extends React.Component {
         transparent={false}
         visible={this.state.modalVisible}>
         <View style={styles.container}>
-            <WebView
-              source={{html: this.state.formHtml}}
-              style={styles.webview}
-            />
-            <TouchableHighlight
-              onPress={() => this.setModalVisible(!this.state.modalVisible, {})}
-              style={styles.hide}>
-              <Text>Hide Modal</Text>
-            </TouchableHighlight>
+          <WebView
+            source={{html: this.state.formHtml}}
+            style={styles.webview}
+          />
+          <TouchableHighlight
+            onPress={() => this.setModalVisible(!this.state.modalVisible, {})}
+            style={styles.hide}>
+            <Text>Hide Modal</Text>
+          </TouchableHighlight>
         </View>
       </Modal>
     );

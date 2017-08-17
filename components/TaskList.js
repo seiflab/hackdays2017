@@ -55,7 +55,7 @@ export default class TaskList extends React.Component {
                                 'Assignee',
                                 null,
                                 [
-                                  {text: 'Cancel', onPress: () => {
+                                  {text: 'Unclaim', onPress: () => {
                                     this._postClaimState(item, 'unclaim').then(() => {
                                       this.updateData(item, 'assignee', null);
                                     });
@@ -69,6 +69,7 @@ export default class TaskList extends React.Component {
                                     });
                                     }
                                   },
+                                  {text: 'Cancel', onPress: () => {}, style: 'cancel'},
                                 ],
                                 'plain-text'
                               );
@@ -79,8 +80,6 @@ export default class TaskList extends React.Component {
                                   this.updateData(item, 'assignee', 'demo');
                                 })
                             }
-
-                            console.log(item.assignee);
                           }}>
         <Text style={styles.whiteText}>{item.assignee !== null ? 'Unclaim' : 'Claim'}</Text>
       </TouchableHighlight>
