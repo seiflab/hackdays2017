@@ -20,7 +20,6 @@ export default class App extends React.Component {
           initialRoute={{
             component: TaskList,
             title: 'Tasklist',
-            leftButtonTitle: 'All Tasks',
             tintColor: 'white'
           }}
         />

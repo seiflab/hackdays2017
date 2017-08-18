@@ -5,8 +5,7 @@ import { View, FlatList, RefreshControl, StyleSheet, Text, TouchableHighlight, A
 
 import TaskItem from './TaskItem';
 import ModalDialog from './ModalDialog';
-
-const HOSTNAME = 'localhost';
+import Config from '../Config';
 
 export default class TaskList extends React.Component {
 
@@ -95,7 +94,7 @@ export default class TaskList extends React.Component {
     );
 
     return (
-      <Swipeable style={styles.item} leftContent={completeBtn} rightButtons={[claimBtn, moreActionsBtn]} rightButtonWidth={100}>
+      <Swipeable onLeftActionRelease={()=>this.setModalVisible(true, {id: item.id})} style={styles.item} leftContent={completeBtn} rightButtons={[claimBtn, moreActionsBtn]} rightButtonWidth={100}>
         <TaskItem openModal={this.setModalVisible} {...item} />
       </Swipeable>
     );
@@ -104,13 +103,13 @@ export default class TaskList extends React.Component {
   _showActionSheet(item) {
     const dueLbl = 'Set due date';
     const followUpLbl = 'Set follow-up date';
-    const addGroupsLbl = 'Add groups';
     const cancelLbl = 'Cancel';
+    const optionsBtn = [dueLbl, followUpLbl, cancelLbl];
 
     return ActionSheetIOS.showActionSheetWithOptions({
         title: 'More options...',
-        options: [dueLbl, followUpLbl, addGroupsLbl, cancelLbl],
-        cancelButtonIndex: 3
+        options: optionsBtn,
+        cancelButtonIndex: optionsBtn.length-1
       },
       (index) => {
         let dateTime = this.state.dateTime;
@@ -130,14 +129,14 @@ export default class TaskList extends React.Component {
         dateTime.item = item;
         let type = dateTime.type;
         dateTime.currentDate = item === 'null' || item[type] === 'undefined' || item[type] === null ? new Date() : new Date(item[type].slice(0, -5) + 'Z');
-        dateTime.pickerActive = index !== 3;
+        dateTime.pickerActive = index !== optionsBtn.length-1;
         this.setState(this.state);
       })
   }
 
   _putTaskUpdate(item) {
     console.log(item);
-    return fetch('http://' + HOSTNAME + ':8082/engine-rest/task/' + item.id, {
+    return fetch('http://' + Config.ENGINE + '/engine-rest/task/' + item.id, {
       method: 'PUT',
       headers: {
         'Accept': 'application/json',
@@ -148,7 +147,7 @@ export default class TaskList extends React.Component {
   }
 
   _postClaimState(item, action) {
-    return fetch('http://' + HOSTNAME + ':8082/engine-rest/task/' + item.id + '/' + action, {
+    return fetch('http://' + Config.ENGINE + '/engine-rest/task/' + item.id + '/' + action, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -159,7 +158,7 @@ export default class TaskList extends React.Component {
   }
 
   fetchData() {
-    return fetch('http://' + HOSTNAME + ':8082/engine-rest/task?sortBy=created&sortOrder=desc')
+    return fetch('http://' + Config.ENGINE + '/engine-rest/task?sortBy=created&sortOrder=desc')
       .then(response => response.json())
       .then((data) => {
         const mappedData = data.map(dataItem => Object.assign({}, dataItem, { key: dataItem.id }));

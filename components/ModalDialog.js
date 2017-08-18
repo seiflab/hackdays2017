@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Modal, Text, TouchableHighlight, View, WebView } from 'react-native';
 import { parseForm, getFormInputNames, getInjectedForm, getFormData, addSubmitToForm } from '../utils';
-
+import Config from '../Config';
 
 const script = 'const form = document.querySelector("form");form.onsubmit = (e) => {e.preventDefault();window.postMessage(e.target.outerHTML);};';
 export default class ModalDialog extends React.Component {
@@ -21,18 +21,18 @@ export default class ModalDialog extends React.Component {
       return this.setState({modalVisible: visible});
     }
     this.setState({taskId: id});
-    return fetch(`http://localhost:8082/engine-rest/task/${id}/form`)
+    return fetch(`http://` + Config.ENGINE + `/engine-rest/task/${id}/form`)
       .then(({_bodyText}) => {
         const resultJson = JSON.parse(_bodyText);
         const key = parseForm(resultJson);
-        return fetch(`http://localhost:8082/${key}`);
+        return fetch(`http://` + Config.ENGINE + `/${key}`);
       })
       .then(({_bodyText}) => {
         this.setState({
           formHtml: `<div>${_bodyText}</div>`
         });
         const varNames = getFormInputNames(_bodyText);
-        return fetch(`http://localhost:8082/engine-rest/task/${id}/form-variables?deserializeValues=false&${varNames}`);
+        return fetch(`http://` + Config.ENGINE + `/engine-rest/task/${id}/form-variables?deserializeValues=false&${varNames}`);
       })
       .then(({_bodyText}) => {
         const injectedForm = getInjectedForm(this.state.formHtml, JSON.parse(_bodyText));
@@ -47,7 +47,7 @@ export default class ModalDialog extends React.Component {
 
   _onMessage(event){
     const varsToSubmit =  JSON.stringify(getFormData(event.nativeEvent.data));
-    return fetch(`http://localhost:8082/engine-rest/task/${this.state.taskId}/submit-form`, {
+    return fetch(`http://` + Config.ENGINE + `/engine-rest/task/${this.state.taskId}/submit-form`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
