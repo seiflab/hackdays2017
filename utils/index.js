@@ -53,7 +53,7 @@ export const parseForm = ({ key, contextPath }) => {
 
   export const getFormData = (form) => {
     const $ = cheerio.load(form);
-    const variablesArray = $('input, select').map((i,{attribs}) => ([[attribs['cam-variable-name'], {value: attribs.value, type: attribs.customtype} ]])).get();
+    const variablesArray = $('input, select').not('input[type="submit"]').map((i,{attribs}) => ([[attribs['cam-variable-name'], {value: attribs.value, type: attribs.customtype} ]])).get();
     const variables = _.fromPairs(variablesArray);
     return ({variables});
   }
