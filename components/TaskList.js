@@ -20,7 +20,8 @@ export default class TaskList extends React.Component {
       isRefreshing: false,
       data: [],
       filteredData: [],
-      selectedTab: 0
+      selectedTab: 0,
+      isSwiping: false
     };
 
     this.setModalVisible = this.setModalVisible.bind(this);
@@ -99,7 +100,13 @@ export default class TaskList extends React.Component {
     );
 
     return (
-      <Swipeable onLeftActionRelease={()=>this.setModalVisible(true, {id: item.id})} style={styles.item} leftContent={completeBtn} rightButtons={[claimBtn, moreActionsBtn]} rightButtonWidth={100}>
+      <Swipeable
+        onLeftActionRelease={()=>this.setModalVisible(true, {id: item.id})}
+        style={styles.item}
+        leftContent={ item.assignee === 'demo' ? completeBtn: undefined}
+        rightButtons={[claimBtn, moreActionsBtn]} rightButtonWidth={100}
+        onSwipeComplete={() => console.log('complete')}
+        onSwipeRelease={() => this.setState({isSwiping: false})}>
         <TaskItem openModal={this.setModalVisible} {...item} />
       </Swipeable>
     );
@@ -187,7 +194,7 @@ export default class TaskList extends React.Component {
   }
 
   _getListData() {
-    return this.state.selectedTab === 0 ? this.state.data : this.state.filteredData;
+    return this.state.selectedTab === 1 ? this.state.data : this.state.filteredData;
   }
 
   renderSeparator = () => {
@@ -205,7 +212,7 @@ export default class TaskList extends React.Component {
       <View style={styles.container}>
         <ModalDialog ref="modal" reload={this.fetchData}/>
         <SegmentedControlIOS
-          values={['All Tasks', 'My Tasks']}
+          values={['My Tasks', 'All Tasks']}
           tintColor={'#b5152b'}
           selectedIndex={this.state.selectedTab}
           onChange={(e) => this.setState({selectedTab: e.nativeEvent.selectedSegmentIndex})}

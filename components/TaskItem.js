@@ -11,7 +11,7 @@ export default class TaskItem extends React.Component {
 
 
   _formatDate(value) {
-    return moment(value).fromNow();
+    return value ? moment(value).fromNow() : ''
   }
 
   render() {
@@ -20,13 +20,15 @@ export default class TaskItem extends React.Component {
 
     return (
 
-      <TouchableHighlight style={styles.touch} onPress={()=>this.props.openModal(true, {id: this.props.id})} underlayColor="rgba(0, 0, 0, 0.05)">
+      <TouchableHighlight
+          style={styles.touch}
+          onPress={()=>this.props.openModal(true, {id: this.props.id})} underlayColor="rgba(0, 0, 0, 0.05)">
         <View style={styles.container}>
           <View>
             <Text style={styles.header}>{taskName}</Text>
             <Text style={styles.assignee}>{assignee}</Text>
           </View>
-          <Text style={styles.date}>{this._formatDate(this.props.created)}</Text>
+          <Text style={styles.date}>{this._formatDate(this.props.due)}</Text>
         </View>
       </TouchableHighlight>
     );
