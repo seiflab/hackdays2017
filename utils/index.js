@@ -60,6 +60,6 @@ export const parseForm = ({ key, contextPath }) => {
 
   export const addSubmitToForm = (form) => {
     const $ = cheerio.load(form);
-    $('<input type="submit" value="complete" />').appendTo('form');
+    $('<input type="submit" value="Complete" />').appendTo('form');
     return $(':root').html();
   }

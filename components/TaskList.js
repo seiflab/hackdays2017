@@ -1,11 +1,11 @@
 import Swipeable from 'react-native-swipeable';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import React from 'react';
-import { View, FlatList, RefreshControl, StyleSheet, Text, TouchableHighlight, ActionSheetIOS, AlertIOS } from 'react-native';
+import { View, FlatList, RefreshControl, StyleSheet, Text, TouchableHighlight, ActionSheetIOS, AlertIOS, SegmentedControlIOS } from 'react-native';
 
 import TaskItem from './TaskItem';
 import ModalDialog from './ModalDialog';
-import Config from '../Config';
+import { ENGINE_URL } from '../config';
 
 export default class TaskList extends React.Component {
 
@@ -18,7 +18,9 @@ export default class TaskList extends React.Component {
         currentDate: new Date()
       },
       isRefreshing: false,
-      data: []
+      data: [],
+      filteredData: [],
+      selectedTab: 0
     };
 
     this.setModalVisible = this.setModalVisible.bind(this);
@@ -37,6 +39,9 @@ export default class TaskList extends React.Component {
 
     data[itemIndex][attr] = value;
     this.setState(this.state);
+    const filteredData = this.state.data.filter(({assignee}) => assignee === 'demo');
+    this.setState({filteredData});
+
   }
 
   _renderItem = ({item}) => {
@@ -135,8 +140,7 @@ export default class TaskList extends React.Component {
   }
 
   _putTaskUpdate(item) {
-    console.log(item);
-    return fetch('http://' + Config.ENGINE + '/engine-rest/task/' + item.id, {
+    return fetch(`${ENGINE_URL}/engine-rest/task/${item.id}`, {
       method: 'PUT',
       headers: {
         'Accept': 'application/json',
@@ -147,7 +151,7 @@ export default class TaskList extends React.Component {
   }
 
   _postClaimState(item, action) {
-    return fetch('http://' + Config.ENGINE + '/engine-rest/task/' + item.id + '/' + action, {
+    return fetch(`${ENGINE_URL}/engine-rest/task/${item.id}/${action}`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -158,11 +162,12 @@ export default class TaskList extends React.Component {
   }
 
   fetchData() {
-    return fetch('http://' + Config.ENGINE + '/engine-rest/task?sortBy=created&sortOrder=desc')
+    return fetch(`${ENGINE_URL}/engine-rest/task?sortBy=created&sortOrder=desc`)
       .then(response => response.json())
       .then((data) => {
         const mappedData = data.map(dataItem => Object.assign({}, dataItem, { key: dataItem.id }));
-        this.setState({ data: mappedData });
+        const filteredData = mappedData.filter(({assignee}) => assignee === 'demo');
+        this.setState({ data: mappedData, filteredData });
       });
   }
 
@@ -181,6 +186,10 @@ export default class TaskList extends React.Component {
     });
   }
 
+  _getListData() {
+    return this.state.selectedTab === 0 ? this.state.data : this.state.filteredData;
+  }
+
   renderSeparator = () => {
     return (
       <View
@@ -195,13 +204,22 @@ export default class TaskList extends React.Component {
     return (
       <View style={styles.container}>
         <ModalDialog ref="modal" reload={this.fetchData}/>
+        <SegmentedControlIOS
+          values={['All Tasks', 'My Tasks']}
+          tintColor={'#b5152b'}
+          selectedIndex={this.state.selectedTab}
+          onChange={(e) => this.setState({selectedTab: e.nativeEvent.selectedSegmentIndex})}
+          style={styles.tabs}
+        />
         <FlatList
+          automaticallyAdjustContentInsets={false}
+          style={styles.list}
           ListEmptyComponent={
             <Text style={styles.emptyList}>Sorry. No tasks available to work on.</Text>
           }
           keyExtractor={this._keyExtractor}
           renderItem={this._renderItem.bind(this)}
-          data={this.state.data}
+          data={this._getListData()}
           ItemSeparatorComponent={this.renderSeparator}
           refreshControl={
             <RefreshControl
@@ -211,7 +229,6 @@ export default class TaskList extends React.Component {
             />
           }
         />
-
         <DateTimePicker
           isVisible = { this.state.dateTime.pickerActive }
           titleIOS = { this.state.dateTime.pickerTitle }
@@ -244,10 +261,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1
   },
+  tabs: {
+    margin: 10,
+    marginTop: 80
+  },
   item: {
     flex: 1,
     paddingLeft: 0,
-    paddingRight: 0
+    paddingRight: 0,
+    marginTop: 0
   },
   leftContent: {
     flex: 1,

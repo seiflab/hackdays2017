@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Modal, Text, TouchableHighlight, View, WebView } from 'react-native';
 import { parseForm, getFormInputNames, getInjectedForm, getFormData, addSubmitToForm } from '../utils';
-import Config from '../Config';
+import {ENGINE_URL} from '../config';
 
 const script = 'const form = document.querySelector("form");form.onsubmit = (e) => {e.preventDefault();window.postMessage(e.target.outerHTML);};';
 export default class ModalDialog extends React.Component {
@@ -10,7 +10,7 @@ export default class ModalDialog extends React.Component {
     this._onMessage = this._onMessage.bind(this);
     this.state = {
       modalVisible: false,
-      webViewStyle: '<style>body{ font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size:14px}.form-group{display:flex; flex-direction:column; align-items: space-between; margin-bottom: 20px} input{width: 100%; padding: 10px; font-size: 14px} select{width: 100%;} label{font-weight: bold; font-size:14px}</style>',
+      webViewStyle: '<style>body{ font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size:13px}.form-group{display:flex; flex-direction:column; align-items: space-between; margin-bottom: 20px} input{width: 100%; font-size: 13px} select{width: 100%;} label{font-weight: bold; font-size:14px} input[type=submit], select{-webkit-appearance: none; padding: 10px} input[type=checkbox]{width: auto;}',
       formHtml: '',
       taskId: ''
     };
@@ -21,22 +21,23 @@ export default class ModalDialog extends React.Component {
       return this.setState({modalVisible: visible});
     }
     this.setState({taskId: id});
-    return fetch(`http://` + Config.ENGINE + `/engine-rest/task/${id}/form`)
+    return fetch(`${ENGINE_URL}/engine-rest/task/${id}/form`)
       .then(({_bodyText}) => {
         const resultJson = JSON.parse(_bodyText);
         const key = parseForm(resultJson);
-        return fetch(`http://` + Config.ENGINE + `/${key}`);
+        return fetch(`${ENGINE_URL}/${key}`);
       })
       .then(({_bodyText}) => {
         this.setState({
           formHtml: `<div>${_bodyText}</div>`
         });
         const varNames = getFormInputNames(_bodyText);
-        return fetch(`http://` + Config.ENGINE + `/engine-rest/task/${id}/form-variables?deserializeValues=false&${varNames}`);
+        return fetch(`${ENGINE_URL}/engine-rest/task/${id}/form-variables?deserializeValues=false&${varNames}`);
       })
       .then(({_bodyText}) => {
         const injectedForm = getInjectedForm(this.state.formHtml, JSON.parse(_bodyText));
         const submitForm = addSubmitToForm('<div>'+injectedForm+'</div>');
+        console.log(submitForm);
         this.setState({
           formHtml: `<div>${submitForm}</div>${this.state.webViewStyle}`,
           modalVisible: true
@@ -47,7 +48,7 @@ export default class ModalDialog extends React.Component {
 
   _onMessage(event){
     const varsToSubmit =  JSON.stringify(getFormData(event.nativeEvent.data));
-    return fetch(`http://` + Config.ENGINE + `/engine-rest/task/${this.state.taskId}/submit-form`, {
+    return fetch(`${ENGINE_URL}/engine-rest/task/${this.state.taskId}/submit-form`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -97,8 +98,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column'
   },
   webview: {
-    flex: 1,
-    marginTop: 20
+    marginTop: 10
   },
   hide: {
     height: 30,
