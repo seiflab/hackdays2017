@@ -22,7 +22,7 @@ export default class TaskItem extends React.Component {
 
       <TouchableHighlight
           style={styles.touch}
-          onPress={()=>this.props.openModal(true, {id: this.props.id})} underlayColor="rgba(0, 0, 0, 0.05)">
+          onPress={()=> this.props.shouldOpen && this.props.openModal(true, {id: this.props.id})} underlayColor="rgba(0, 0, 0, 0.05)">
         <View style={styles.container}>
           <View>
             <Text style={styles.header}>{taskName}</Text>

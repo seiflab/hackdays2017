@@ -107,7 +107,10 @@ export default class TaskList extends React.Component {
         rightButtons={[claimBtn, moreActionsBtn]} rightButtonWidth={100}
         onSwipeComplete={() => console.log('complete')}
         onSwipeRelease={() => this.setState({isSwiping: false})}>
-        <TaskItem openModal={this.setModalVisible} {...item} />
+        <TaskItem
+          openModal={this.setModalVisible}
+          shouldOpen={item.assignee === 'demo'}
+          {...item} />
       </Swipeable>
     );
   }

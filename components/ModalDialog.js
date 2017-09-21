@@ -3,14 +3,14 @@ import { StyleSheet, Modal, Text, TouchableHighlight, View, WebView } from 'reac
 import { parseForm, getFormInputNames, getInjectedForm, getFormData, addSubmitToForm } from '../utils';
 import {ENGINE_URL} from '../config';
 
-const script = 'const form = document.querySelector("form");form.onsubmit = (e) => {e.preventDefault();window.postMessage(e.target.outerHTML);};';
+const script = 'const form = document.querySelector("form"); form.onsubmit = (e) => {e.preventDefault();var checkbox = document.querySelector("input[type=checkbox]"); checkbox && checkbox.setAttribute("checked", checkbox.checked);var select=document.querySelector("select"); select && select.setAttribute("value", select.value); window.postMessage(e.target.outerHTML);};';
 export default class ModalDialog extends React.Component {
   constructor() {
     super();
     this._onMessage = this._onMessage.bind(this);
     this.state = {
       modalVisible: false,
-      webViewStyle: '<style>body{ font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size:13px}.form-group{display:flex; flex-direction:column; align-items: space-between; margin-bottom: 20px} input{width: 100%; font-size: 13px} select{width: 100%;} label{font-weight: bold; font-size:14px} input[type=submit], select{-webkit-appearance: none; padding: 10px} input[type=checkbox]{width: auto;}',
+      webViewStyle: '<style>body{ font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size:13px}.form-group{display:flex; flex-direction:column; align-items: space-between; margin-bottom: 20px} input{width: 100%; font-size: 13px} select{width: 100%;} label{font-weight: bold; font-size:14px} input[type=submit]{-webkit-appearance: none; padding: 5px; background: #428bca; color: white; font-weight: bold;} input[type=checkbox]{width: auto;}',
       formHtml: '',
       taskId: ''
     };
